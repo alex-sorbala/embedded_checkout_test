@@ -35,7 +35,7 @@
     }
 
     .controls {
-      max-width: 600px;
+      width: 80%;
       margin: 0 auto 24px;
       display: flex;
       gap: 12px;
@@ -78,9 +78,9 @@
     }
 
     #checkout-container {
-      max-width: 600px;
+      width: 80%;
       margin: 0 auto;
-      min-height: 600px;
+      min-height: 700px;
     }
 
     #checkout-container iframe {
@@ -91,11 +91,39 @@
     }
 
     #error-message {
-      max-width: 600px;
+      width: 80%;
       margin: 0 auto;
       color: #c00;
       font-size: 14px;
       display: none;
+    }
+
+    #response-section {
+      width: 80%;
+      margin: 32px auto 0;
+      display: none;
+    }
+
+    #response-section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 8px;
+    }
+
+    #response-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 16px 20px;
+      border-radius: 10px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 0;
     }
   </style>
 </head>
@@ -116,6 +144,11 @@
   <p id="error-message"></p>
 
   <div id="checkout-container"></div>
+
+  <div id="response-section">
+    <h2>Response</h2>
+    <pre id="response-output"></pre>
+  </div>
 
   <script>
     async function mountCheckout() {
@@ -141,6 +174,10 @@
 
         checkout.onPaymentComplete((data) => {
           console.log('Payment complete:', data);
+          const section = document.getElementById('response-section');
+          const output = document.getElementById('response-output');
+          output.textContent = JSON.stringify(data, null, 2);
+          section.style.display = 'block';
         });
       } catch (error) {
         console.error('Checkout initialization failed:', error);
