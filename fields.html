@@ -89,6 +89,19 @@
       cursor: not-allowed;
     }
 
+    .env-badge {
+      width: 80%;
+      margin: -14px auto 24px;
+      font-size: 12px;
+      font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+      color: #666;
+    }
+
+    .env-badge strong {
+      color: #111;
+      font-weight: 600;
+    }
+
     .checkout-form {
       width: 80%;
       margin: 0 auto;
@@ -96,12 +109,16 @@
     }
 
     #payment-fields {
+      height: 300px;
       min-height: 200px;
       margin: 24px 0;
+      resize: vertical;
+      overflow: hidden;
     }
 
     #payment-fields iframe {
       width: 100%;
+      height: 100%;
       border: none;
       border-radius: 16px;
     }
@@ -183,6 +200,8 @@
     />
     <button id="render-btn" onclick="mountFields()">Render</button>
   </div>
+
+  <p class="env-badge">checkout.js &middot; <strong id="env-domain"></strong></p>
 
   <p id="error-message"></p>
 
@@ -277,6 +296,34 @@
     });
 
     document.getElementById('payment-form').addEventListener('submit', handleSubmit);
+
+    // Let the container be resized by dragging its corner (like a textarea).
+    // While dragging, drop a transparent shield over the page so the mounted
+    // iframe doesn't swallow the mouse events and freeze the resize.
+    function enableResizeShield(el) {
+      el.addEventListener('mousedown', () => {
+        const shield = document.createElement('div');
+        shield.style.cssText =
+          'position:fixed;inset:0;z-index:9999;cursor:ns-resize;';
+        document.body.appendChild(shield);
+        const cleanup = () => {
+          shield.remove();
+          document.removeEventListener('mouseup', cleanup);
+        };
+        document.addEventListener('mouseup', cleanup);
+      });
+    }
+
+    enableResizeShield(document.getElementById('payment-fields'));
+  </script>
+
+  <script>
+    // Display the checkout.js domain as a visual environment indicator.
+    (function () {
+      const s = document.querySelector('script[src*="checkout.js"]');
+      const el = document.getElementById('env-domain');
+      if (s && el) el.textContent = new URL(s.src).hostname;
+    })();
   </script>
 
 </body>
