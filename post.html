@@ -89,6 +89,19 @@
       cursor: not-allowed;
     }
 
+    .env-badge {
+      width: 80%;
+      margin: -14px auto 24px;
+      font-size: 12px;
+      font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+      color: #666;
+    }
+
+    .env-badge strong {
+      color: #111;
+      font-weight: 600;
+    }
+
     .checkout-form {
       width: 80%;
       margin: 0 auto;
@@ -207,6 +220,8 @@
     />
   </div>
 
+  <p class="env-badge">checkout.js &middot; <strong id="env-domain"></strong></p>
+
   <p id="error-message"></p>
 
   <!-- Your custom payment form with all card fields (Direct Post) -->
@@ -318,6 +333,15 @@
     }
 
     document.getElementById('payment-form').addEventListener('submit', handleSubmit);
+  </script>
+
+  <script>
+    // Display the checkout.js domain as a visual environment indicator.
+    (function () {
+      const s = document.querySelector('script[src*="checkout.js"]');
+      const el = document.getElementById('env-domain');
+      if (s && el) el.textContent = new URL(s.src).hostname;
+    })();
   </script>
 
 </body>
