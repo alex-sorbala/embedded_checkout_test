@@ -89,10 +89,26 @@
       cursor: not-allowed;
     }
 
+    .env-badge {
+      width: 80%;
+      margin: -14px auto 24px;
+      font-size: 12px;
+      font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+      color: #666;
+    }
+
+    .env-badge strong {
+      color: #111;
+      font-weight: 600;
+    }
+
     #checkout-container {
       width: 80%;
       margin: 0 auto;
       height: 600px;
+      min-height: 200px;
+      resize: vertical;
+      overflow: hidden;
     }
 
     #checkout-container iframe {
@@ -158,6 +174,8 @@
     <button id="render-btn" onclick="mountCheckout()">Render</button>
   </div>
 
+  <p class="env-badge">checkout.js &middot; <strong id="env-domain"></strong></p>
+
   <p id="error-message"></p>
 
   <div id="checkout-container"></div>
@@ -208,6 +226,34 @@
     document.getElementById('session-token').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') mountCheckout();
     });
+
+    // Let the container be resized by dragging its corner (like a textarea).
+    // While dragging, drop a transparent shield over the page so the mounted
+    // iframe doesn't swallow the mouse events and freeze the resize.
+    function enableResizeShield(el) {
+      el.addEventListener('mousedown', () => {
+        const shield = document.createElement('div');
+        shield.style.cssText =
+          'position:fixed;inset:0;z-index:9999;cursor:ns-resize;';
+        document.body.appendChild(shield);
+        const cleanup = () => {
+          shield.remove();
+          document.removeEventListener('mouseup', cleanup);
+        };
+        document.addEventListener('mouseup', cleanup);
+      });
+    }
+
+    enableResizeShield(document.getElementById('checkout-container'));
+  </script>
+
+  <script>
+    // Display the checkout.js domain as a visual environment indicator.
+    (function () {
+      const s = document.querySelector('script[src*="checkout.js"]');
+      const el = document.getElementById('env-domain');
+      if (s && el) el.textContent = new URL(s.src).hostname;
+    })();
   </script>
 
 </body>
