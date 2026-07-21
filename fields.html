@@ -246,6 +246,15 @@
       try {
         // Mount the secure payment fields inside 'payment-fields'
         await checkout.mount(token, 'payment-fields');
+
+        // Register the payment completion callback and display its response on the page
+        checkout.onPaymentComplete((data) => {
+          console.log('Payment complete:', data);
+          const section = document.getElementById('response-section');
+          const output = document.getElementById('response-output');
+          output.textContent = JSON.stringify(data, null, 2);
+          section.style.display = 'block';
+        });
       } catch (error) {
         console.error('Checkout initialization failed:', error);
         errorMsg.textContent = 'Unable to load payment fields. Please check your session token and try again.';
@@ -273,14 +282,9 @@
         // Submit the payment using checkout.submit()
         const result = await checkout.submit();
 
-        // Log the raw result to the console
+        // The submit() result is now only reported to the console; the
+        // on-page response is driven by the onPaymentComplete callback.
         console.log('Payment response:', result);
-
-        // Display the JSON result in a pretty, raw manner
-        const section = document.getElementById('response-section');
-        const output = document.getElementById('response-output');
-        output.textContent = JSON.stringify(result, null, 2);
-        section.style.display = 'block';
       } catch (error) {
         console.error('Payment submission failed:', error);
         errorMsg.textContent = 'An error occurred. Please try again.';
